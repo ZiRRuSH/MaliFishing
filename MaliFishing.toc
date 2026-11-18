@@ -1,0 +1,11 @@
+## Interface: 16001
+## Title: MaliFishing
+## Notes: One-key fishing and catch history for WoW Forever.
+## Category: Professions
+## IconTexture: Interface\Icons\INV_Misc_Fish_02
+## Version: 0.1
+## Author: Mali Gnosis
+## OptionalDeps: Auctionator
+## SavedVariablesPerCharacter: MaliFishingDB
+FishingRequirements.lua
+MaliFishing.lua
