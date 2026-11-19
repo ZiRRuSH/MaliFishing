@@ -291,8 +291,10 @@ function fresh.settle()
         local entry = now[key]
         if not fresh.same(credit.entry, entry) or entry.count < credit.expected then fresh.slots[key] = nil end
     end
+    local waiting, nowTime = {}, GetTime()
     for _, batch in ipairs(fresh.queue) do
-        if GetTime() <= batch.deadline then
+        if nowTime <= batch.deadline then
+            batch.matched = batch.matched or {}
             local oldGUIDs = {}
             for _, old in pairs(batch.before) do
                 if old.guid then oldGUIDs[old.guid] = true end
@@ -301,17 +303,21 @@ function fresh.settle()
                 local old, remaining = batch.before[key], batch.items[entry.id] or 0
                 local added = fresh.same(old, entry) and math.max(0, entry.count - old.count)
                     or (not old and not (entry.guid and oldGUIDs[entry.guid]) and entry.count or 0)
+                local matched = batch.matched[key] or 0
+                added = added - matched
                 if added > 0 and remaining > 0 and entry.loot then
                     local count = math.min(added, remaining)
                     local previous = fresh.slots[key]
-                    batch.items[entry.id] = remaining - count
+                    batch.items[entry.id] = remaining > count and remaining - count or nil
+                    batch.matched[key] = matched + count
                     fresh.slots[key] = { entry = entry, expected = entry.count,
                         count = math.min(entry.count, count + (previous and previous.count or 0)) }
                 end
             end
+            if next(batch.items) then waiting[#waiting + 1] = batch end
         end
     end
-    fresh.queue = {}
+    fresh.queue = waiting
     return now
 end
 local function prepareCatch(self)
