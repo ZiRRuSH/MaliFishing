@@ -1,3 +1,3 @@
 <Bindings>
-    <Binding name="CLICK MaliFishingButton:LeftButton" header="MALIFISHING" category="MALIFISHING" />
+    <Binding name="CLICK MaliFishingButton:LeftButton" category="MaliFishing" />
 </Bindings>
